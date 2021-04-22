@@ -1,0 +1,60 @@
+- name: Setup neomutt COPR
+  become: yes
+  command: dnf -y copr enable flatcap/neomutt
+- name: Install basic component of the cli mail setup
+  become: yes
+  package:
+      name: "{{ item }}"
+      state: present
+  loop:
+    - notmuch
+    - neomutt
+    - w3m
+    - isync
+- name: Configure notmuch and friends
+  template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+  loop:
+    - {"src": "notmuch.j2", "dest": "~/.pqrs/notmuch-config"}
+    - {"src": "neomutt.j2", "dest": "~/.pqrs/neomuttrc"}
+    - {"src": "mbsyncrc.j2", "dest": "~/.pqrs/mbsyncrc"}
+    - {"src": "mailcap.j2", "dest": "~/.pqrs/mailcap"}
+    - {"src": "mime.types.j2", "dest": "~/.pqrs/mime.types"}
+- name: Apply configuration
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest}}"
+    state: link
+  loop:
+    - {"src": "~/.pqrs/mbsyncrc", "dest": "~/.mbsyncrc"}
+    - {"src": "~/.pqrs/notmuch-config", "dest": "~/.notmuch-config"}
+    - {"src": "~/.pqrs/neomuttrc", "dest": "~/.neomuttrc"}
+    - {"src": "~/.pqrs/mailcap", "dest": "~/.mailcap"}
+    - {"src": "~/.pqrs/mime.types", "dest": "~/.mime.types"}
+- name: Create supplementary neomutt configuration dir
+  file:
+      path: ~/.pqrs/neomuttrc.d
+      state: directory
+- name: Generate neomutt auxiliary config files
+  template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+  loop:
+    - {"src": "neomutt-vim-keys.j2", "dest": "~/.pqrs/neomuttrc.d/vim-keys"}
+    - {"src": "neomutt-colors-solarized-dark-16.j2", "dest": "~/.pqrs/neomuttrc.d/colors-solarized-dark-16"}
+    - {"src": "neomutt-mailboxes.j2", "dest": "~/.pqrs/neomuttrc.d/mailboxes"}
+- name: Generate neomutt account-specific config
+  template:
+      src: neomutt-account.j2
+      dest: "~/.pqrs/neomuttrc.d/account.{{ item['name'] }}"
+  loop: "{{ emails }}"
+  loop_control:
+      label: "{{ item['name'] }}"
+- name: Create mail folders
+  file:
+      path: "~/.mails/{{item['name']}}/"
+      state: directory
+  loop: "{{ emails }}"
+  loop_control:
+      label: "{{ item['name'] }}"

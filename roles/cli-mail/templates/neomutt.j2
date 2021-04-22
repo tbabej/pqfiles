@@ -1,0 +1,76 @@
+source ~/.pqrs/neomuttrc.d/colors-solarized-dark-16
+source ~/.pqrs/neomuttrc.d/vim-keys
+
+set folder="~/.mails"
+
+# This variable specifies notmuch query type, supported types: 'threads' and
+# 'messages'.
+set nm_query_type = threads
+
+# When set, mutt will use the first virtual mailbox (see virtual-mailboxes)
+# as a spoolfile.
+set virtual_spoolfile = yes
+
+source ~/.pqrs/neomuttrc.d/mailboxes
+
+# Sidebar configuration
+set sidebar_visible
+set sidebar_width=30
+{% raw %}
+set sidebar_format = "%B%?F? [%F]?%* %?N?%N/?%S"
+{% endraw %}
+set sidebar_short_path
+set sidebar_delim_chars="/"
+set sidebar_folder_indent
+set sidebar_indent_string="  "
+set sidebar_new_mail_only
+set mail_check_stats
+set mail_check_stats_interval=30
+
+# Whitelist the grouping folders
+sidebar_whitelist Personal
+sidebar_whitelist PQ
+
+# Index format to include notmuch tags
+{% raw %}
+set index_format="%4C %Z %{%b %d} %-15.15L (%?l?%4l&%4c?) %-20.150s %>  %-15.15g"
+{% endraw %}
+
+macro index \CN '\
+<enter-command>toggle sidebar_visible<enter>\
+<enter-command>set sidebar_new_mail_only<enter>\
+' "Sidebar - new email"
+
+macro index \CH '\
+<enter-command>toggle sidebar_visible<enter>\
+<enter-command>unset sidebar_new_mail_only<enter>\
+' "Sidebar - all email"
+
+# This setting is dependant on the filepath to the mailbox collection
+# set sidebar_component_depth=5
+
+set sort=threads
+set sort_aux=reverse-last-date-received
+
+# Display HTML emails
+alternative_order text/plain text/html
+auto_view text/html
+
+# Forward with attachments
+set mime_forward
+set mime_forward_rest=yes
+
+# Ctrl-n, Ctrl-p to select next, previous folder.
+# Ctrl-o to open selected folder.
+bind index,pager \CI sidebar-prev
+bind index,pager \CB sidebar-next
+bind index,pager \CO sidebar-open
+
+# Custom macros
+macro index A \
+    "<tag-pattern>~N<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" \
+    "mark all new as read"
+
+{% for email in emails %}
+macro index <f{{ loop.index }}> '<enter-command>source ~/.pqrs/neomuttrc.d/account.{{ email["name"] }}<enter>'
+{% endfor %}

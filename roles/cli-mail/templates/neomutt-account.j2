@@ -1,0 +1,20 @@
+# Managed by PQRS
+
+# Account configuration for {{ item['name'] }}
+
+{% if item['smtp'] == '127.0.0.1' %}
+  {% set port = 1025 %}
+  {% set emailuser = item['user'] %}
+{% else %}
+  {% set port = 587 %}
+  {% set emailuser = item['user'].split('@')[0] %}
+{% endif %}
+
+set smtp_url=smtp://{{ emailuser }}@{{ item['smtp'] }}:{{ port }}/
+set smtp_pass={{ item['pass'] }}
+set ssl_starttls = yes
+set ssl_force_tls = yes
+
+set from="{{ person['fullname'] }} <{{ item['user'] }}>"
+set hostname="{{ item['user'].split('@')[1] }}"
+set envelope_from=yes
