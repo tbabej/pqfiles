@@ -1,0 +1,49 @@
+- name: Install khal and vdirsyncer for CLI calendar setup
+  become: yes
+  package:
+      name: "{{ item }}"
+      state: present
+  loop:
+    - khal
+    - vdirsyncer
+- name: Cleanup calendars and vdirsyncer status directory
+  file:
+      path: "{{ item }}"
+      state: absent
+  loop:
+      - "~/.calendars"
+      - "~/.vdirsyncer"
+- name: Ensure configuration dirs exists
+  file:
+      path: "{{ item }}"
+      state: directory
+  loop:
+    - "~/.config/khal"
+    - "~/.config/vdirsyncer"
+- name: Setup khal / vdirsyncer config
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - {"src": "khal.conf.j2", "dest": "~/.pqrs/khal-config"}
+    - {"src": "vdirsyncer.j2", "dest": "~/.pqrs/vdirsyncer-config"}
+- name: Apply khal / vdirsyncer config
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  loop:
+    - {"src": "~/.pqrs/khal-config", "dest": "~/.config/khal/config"}
+    - {"src": "~/.pqrs/vdirsyncer-config", "dest": "~/.config/vdirsyncer/config"}
+- name: Pair vdirsyncer calendars
+  shell: yes y | vdirsyncer discover
+- name: Create a vdirsyncer CRON entry
+  cron:
+    name: "Calendar sync"
+    user:  "{{ansible_user_id}}"
+    job: "vdirsyncer sync"
+    minute: "*/10"
+- name: Sync calendar content
+  command: vdirsyncer sync
+- name: Run khal to do cleanup after sync
+  command: "khal calendar"

@@ -1,0 +1,21 @@
+[general]
+status_path = "~/.vdirsyncer/status/"
+
+{% for name, url in (ical_calendars or {}).items() %}
+
+[pair {{name}}]
+a = "{{name}}_local"
+b = "{{name}}_remote"
+collections = null
+conflict_resolution = "b wins"
+
+[storage {{name}}_local]
+type = "filesystem"
+path = "~/.calendars/{{name}}/"
+fileext = ".ics"
+
+[storage {{name}}_remote]
+type = "http"
+read_only = true
+url = "{{url}}"
+{% endfor %}

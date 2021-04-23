@@ -1,0 +1,19 @@
+[calendars]
+{% for name, url in (ical_calendars or {}).items() %}
+[[{{name}}]]
+path = ~/.calendars/{{name}}/
+type = calendar
+color = 3
+
+{% endfor %}
+
+[locale]
+timeformat = %H.%M
+dateformat = %d.%m
+longdateformat = %d.%m.%Y
+datetimeformat = %d.%m %H.%M
+longdatetimeformat = %d.%m.%Y %H.%M
+
+[view]
+agenda_event_format = "{calendar-color}{cancelled}{start-end-time-style} {title}{repeat-symbol}{reset}"
+event_format = "{calendar-color}{cancelled}{start-end-time-style} {title}{repeat-symbol}{reset}"
