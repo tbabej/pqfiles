@@ -4,6 +4,12 @@
     name: hugo
     state: latest
   when: role_version is version("0.1.0", "lt")
+- name: Install pandoc, a versatile document converter
+  become: yes
+  package:
+    name: pandoc
+    state: latest
+  when: role_version is version("0.1.0", "lt")
 - name: Install patat, CLI markdown presentation tool
   become: yes
   package:
