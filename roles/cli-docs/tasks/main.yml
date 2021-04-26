@@ -1,0 +1,5 @@
+- name: Install hugo, the static web generator
+  become: yes
+  package:
+    name: hugo
+    state: latest
