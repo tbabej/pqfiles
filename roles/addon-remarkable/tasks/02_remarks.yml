@@ -1,0 +1,21 @@
+- name: Install remarks dependencies
+  become: yes
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - python3-PyMuPDF
+    - python3-shapely
+  when: role_version is version("0.2.0", "lt")
+- name: Clone remarks
+  git:
+    repo: "git@github.com:tbabej/remarks.git"
+    dest: "~/Installed/remarks"
+    accept_hostkey: yes
+    update: no
+  when: role_version is version("0.2.0", "lt")
+- name: Install remarks
+  command: "sudo python3 -m pip install ."
+  args:
+    chdir: "~/Installed/remarks"
+  when: role_version is version("0.2.0", "lt")
