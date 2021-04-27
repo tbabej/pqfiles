@@ -1,18 +1,1 @@
-- name: Install rmapi
-  unarchive:
-    src: https://github.com/juruen/rmapi/releases/download/v0.0.13/rmapi-linuxx86-64.tar.gz
-    dest: ~/.pqrs/bin/
-    remote_src: yes
-  when: role_version is version("0.1.0", "lt")
-- name: Rename rmapi to rmapi-original
-  command: mv ~/.pqrs/bin/rmapi ~/.pqrs/bin/rmapi-original
-  args:
-    removes: ~/.pqrs/bin/rmapi
-    creates: ~/.pqrs/bin/rmapi-original
-  when: role_version is version("0.1.0", "lt")
-- name: Install rmapi-wrapper
-  template:
-    src: rmapi.j2
-    dest: ~/.pqrs/bin/rmapi
-    mode: u+x
-  when: role_version is version("0.1.0", "lt")
+- include: 01_rmapi.yml
