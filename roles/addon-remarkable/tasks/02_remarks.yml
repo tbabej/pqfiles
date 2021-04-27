@@ -6,6 +6,7 @@
   loop:
     - python3-PyMuPDF
     - python3-shapely
+    - perl-Image-ExifTool
   when: role_version is version("0.2.0", "lt")
 - name: Clone remarks
   git:
