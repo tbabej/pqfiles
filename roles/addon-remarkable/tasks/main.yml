@@ -1,0 +1,6 @@
+- name: Install rmapi
+  unarchive:
+    src: https://github.com/juruen/rmapi/releases/download/v0.0.13/rmapi-linuxx86-64.tar.gz
+    dest: ~/.pqrs/bin/
+    remote_src: yes
+  when: role_version is version("0.1.0", "lt")
