@@ -11,7 +11,7 @@
     accept_hostkey: yes
     update: no
   when: role_version is version("0.4.0", "lt")
-- name: Install remarks
+- name: Install rmview
   command: "sudo python3 -m pip install ."
   args:
     chdir: "~/Installed/rmview"
