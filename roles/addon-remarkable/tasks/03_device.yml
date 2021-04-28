@@ -1,0 +1,34 @@
+- name: Detect if ReMarkable is available
+  wait_for: host=10.11.99.1 port=22 timeout=3
+  register: remarkable_accessible
+  failed_when: False
+- name: Ensure ReMarkable is operational
+  block:
+  - name: Lookup the IP address of the selfhosted remarkable cloud
+    set_fact:
+      rmserver_ip: "{{ lookup('community.general.dig', rmserver + '.')}}"
+  - name: Create temporary setup directory
+    tempfile:
+      state: directory
+      suffix: remarkable
+    register: rmtmpdir
+  - name: Generate the ReMarkable setup script
+    template:
+      src: remarkable-resetup.sh.j2
+      dest: "{{rmtmpdir.path}}/remarkable-resetup.sh"
+  - name: Download rm-Vnc-Server
+    get_url:
+      src: "https://github.com/pl-semiotics/rM-vnc-server/releases/download/v0.0.2/rM2-vnc-server-standalone"
+      dest: "{{rmtmpdir.path}}/rM-vnc-server"
+      mode: u+x
+  - name: Download rm-Vnc-Server libcrypto
+    unarchive:
+      src: "https://github.com/pl-semiotics/rM-vnc-server/files/6211258/libcrypto.so.1.0.2.zip"
+      dest: "{{rmtmpdir.path}}/"
+  - name: Copy files over to reMarkable
+    command: "scp {{rmtmpdir.path}}/{{item}} root@10.11.99.1:"
+    loop:
+      - rM-vnc-server
+      - libcrypto.so.1.0.2
+      - remarkable-resetup.sh
+  when: remarkable_accessible.state is defined and remarkable_accessible.state == "started"
