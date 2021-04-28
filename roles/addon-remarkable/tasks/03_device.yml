@@ -2,6 +2,7 @@
   wait_for: host=10.11.99.1 port=22 timeout=3
   register: remarkable_accessible
   failed_when: False
+  when: role_version is version("0.3.0", "lt")
 - name: Ensure ReMarkable is operational
   block:
   - name: Lookup the IP address of the selfhosted remarkable cloud
