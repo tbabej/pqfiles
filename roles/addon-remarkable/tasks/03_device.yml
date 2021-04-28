@@ -16,6 +16,7 @@
     template:
       src: remarkable-resetup.sh.j2
       dest: "{{rmtmpdir.path}}/remarkable-resetup.sh"
+      mode: u+x
   - name: Download rm-Vnc-Server
     get_url:
       url: "https://github.com/pl-semiotics/rM-vnc-server/releases/download/v0.0.2/rM2-vnc-server-standalone"
@@ -32,4 +33,6 @@
       - rM-vnc-server
       - libcrypto.so.1.0.2
       - remarkable-resetup.sh
+  - name: Execute the remarkable resetup script
+    command: "ssh root@10.11.99.1 ./remarkable-resetup.sh"
   when: remarkable_accessible.state is defined and remarkable_accessible.state == "started"
