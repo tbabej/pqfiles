@@ -3,13 +3,16 @@
   package:
     name: python3-qt5
     state: present
+  when: role_version is version("0.4.0", "lt")
 - name: Clone rmview, a reMarkable display streamer
   git:
     repo: "git@github.com:tbabej/rmview.git"
     dest: "~/Installed/rmview"
     accept_hostkey: yes
     update: no
+  when: role_version is version("0.4.0", "lt")
 - name: Install remarks
   command: "sudo python3 -m pip install ."
   args:
     chdir: "~/Installed/rmview"
+  when: role_version is version("0.4.0", "lt")
