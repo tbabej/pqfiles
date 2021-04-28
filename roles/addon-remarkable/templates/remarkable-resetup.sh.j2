@@ -1,0 +1,50 @@
+#!/bin/bash
+
+IP={{ rmserver_ip }}
+
+# Ensure CA certificated for the selfhosted RM cloud is present
+if [[ ! -f /usr/share/ca-certificates/selfhosted/ca.cert.pem ]]
+then
+    echo "Deploying selfhosted CA certificate"
+    mkdir -p /usr/share/ca-certificates/selfhosted/
+    cp ca.cert.pem /usr/share/ca-certificates/selfhosted/ca.cert.pem
+    chmod 644 /usr/share/ca-certificates/selfhosted/ca.cert.pem
+else
+    echo "Selfhosted CA certificate present"
+fi
+
+if [[ -z `cat /etc/ca-certificates.conf | grep selfhosted/` ]]
+then
+    echo "Registering selfhosted CA certificate"
+    echo selfhosted/ca.cert.pem >> /etc/ca-certificates.conf
+    update-ca-certificates
+else
+    echo "Selfhosted CA certificate registered"
+fi
+
+# Editing hosts file
+HOSTS=(
+    "hwr-production-dot-remarkable-production.appspot.com"
+    "service-manager-production-dot-remarkable-production.appspot.com"
+    "local.appspot.com"
+    "my.remarkable.com"
+    "ping.remarkable.com"
+    "internal.cloud.remarkable.com"
+)
+for HOST in ${messages[@]}
+do
+    if [[ -z `cat /etc/hosts/ | grep " $HOST"` ]]
+    then
+        echo "DNS for $HOST set in /etc/hosts"
+        echo $IP $HOST >> /etc/hosts
+    fi
+done
+
+# Workaround for rM-vnc-server not working on 2.6+
+if [[ ! -f /usr/lib/libcrypto.so.1.0.2 ]]
+then
+    echo "Rmview: libcrypto shared library successfully deployed"
+    cp libcrypto.so.1.0.2 /usr/lib/
+else
+    echo "Rmview: libcrypto shared library already present"
+fi

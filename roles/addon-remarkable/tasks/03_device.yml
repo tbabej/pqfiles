@@ -18,13 +18,14 @@
       dest: "{{rmtmpdir.path}}/remarkable-resetup.sh"
   - name: Download rm-Vnc-Server
     get_url:
-      src: "https://github.com/pl-semiotics/rM-vnc-server/releases/download/v0.0.2/rM2-vnc-server-standalone"
+      url: "https://github.com/pl-semiotics/rM-vnc-server/releases/download/v0.0.2/rM2-vnc-server-standalone"
       dest: "{{rmtmpdir.path}}/rM-vnc-server"
       mode: u+x
   - name: Download rm-Vnc-Server libcrypto
     unarchive:
       src: "https://github.com/pl-semiotics/rM-vnc-server/files/6211258/libcrypto.so.1.0.2.zip"
       dest: "{{rmtmpdir.path}}/"
+      remote_src: yes
   - name: Copy files over to reMarkable
     command: "scp {{rmtmpdir.path}}/{{item}} root@10.11.99.1:"
     loop:
