@@ -1,4 +1,4 @@
 description: "Addon for owners of Remarkable devices."
-version: 0.4.0
+version: 0.4.1
 config:
   rmserver: remarkable.yourdomain.com

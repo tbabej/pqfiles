@@ -16,3 +16,14 @@
   args:
     chdir: "~/Installed/rmview"
   when: role_version is version("0.4.0", "lt")
+- name: Generate rmview configuration
+  template:
+    src: "rmview.json.j2"
+    dest: "~/.pqrs/rmview.json"
+  when: role_version is version("0.4.1", "lt")
+- name: Apply rmview configuration
+  file:
+    src: "~/.pqrs/rmview.json"
+    dest: "~/.config/rmview.json"
+    state: link
+  when: role_version is version("0.4.1", "lt")
