@@ -7,6 +7,9 @@ then
     pushd {{ rmdata }}
     git init
     git config commit.gpgsign false
+    echo '.raw' > '.gitignore'
+    git add .gitignore
+    git commit -m "So it begins"
     popd
 fi
 
@@ -39,7 +42,7 @@ mv /tmp/rmsync-start .raw/.last-sync
 
 # Make a commit in the git
 MSG=`date +'%a %b %e %H:%M:%S %Z %Y'`
-git add *
+git add .
 git commit -a -m "$MSG"
 
 popd
