@@ -21,8 +21,12 @@ pushd .raw
 
 # Get the list of currently present documents and delete stale archives
 ~/.pqrs/bin/rmapi find . | grep '^\[f' | cut -d' ' -f2- | sed 's/$/.zip/' | sed 's/^/\./' > /tmp/rmsync-doclist
-find . -type f -name '*.zip' | xargs -I{} bash -c 'if [[ -z `cat /tmp/rmsync-doclist | grep -F "{}"` ]]; then rm "{}"; fi'
-find . -type d -empty | xargs -I{} rmdir "{}"
+
+if [[ ! -z `cat /tmp/rmsync-doclist` ]]
+then
+  find . -type f -name '*.zip' | xargs -I{} bash -c 'if [[ -z `cat /tmp/rmsync-doclist | grep -F "{}"` ]]; then rm "{}"; fi'
+  find . -type d -empty | xargs -I{} rmdir "{}"
+fi
 
 # Get the timestamp of the last successful sync
 if [[ -f .last-sync ]]
