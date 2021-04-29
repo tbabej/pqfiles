@@ -2,3 +2,4 @@
 - include: 02_remarks.yml
 - include: 03_device.yml
 - include: 04_rmview.yml
+- include: 05_rmdata.yml

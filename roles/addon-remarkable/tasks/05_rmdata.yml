@@ -1,0 +1,26 @@
+- name: "Ensure cronie is installed"
+  become: yes
+  package:
+      name: cronie
+      state: latest
+  when: role_version is version("0.5.0", "lt")
+- name: "Ensure cronie is enabled"
+  become: yes
+  service:
+      name: crond
+      enabled: yes
+      state: started
+  when: role_version is version("0.5.0", "lt")
+- name: Deploy sync_rmdata.sh script
+  template:
+    src: sync_rmdata.sh.j2
+    dest: ~/.pqrs/bin/sync_rmdata.sh
+    mode: u+x
+  when: role_version is version("0.5.0", "lt")
+- name: Create a cronjob for syncing data from the reMarkable
+  cron:
+    name: "reMarkable dat syncer"
+    user:  "{{person['username']}}"
+    job: "/home/{{ person['username'] }}/.pqrs/bin/sync_rmdata.sh"
+    minute: "*"
+  when: role_version is version("0.5.0", "lt")

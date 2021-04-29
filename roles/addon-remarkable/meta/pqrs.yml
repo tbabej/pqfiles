@@ -1,4 +1,5 @@
 description: "Addon for owners of Remarkable devices."
-version: 0.4.1
+version: 0.5.0
 config:
   rmserver: remarkable.yourdomain.com
+  rmdata: /path/to/your/rMdata/folder

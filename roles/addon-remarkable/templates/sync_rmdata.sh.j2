@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Initialize the data directory, if it does not exist
+if [[ ! -d {{ rmdata }} ]]
+then
+    mkdir -p {{ rmdata }}
+    pushd {{ rmdata }}
+    git init
+    git config commit.gpgsign false
+    popd
+fi
+
+# Get the newest updates from the cloud
+pushd {{ rmdata }}
+mkdir -p .raw
+pushd .raw
+~/.pqrs/bin/rmapi mget -i .
+
+# Get the timestamp of the last successful sync
+if [[ -f .last-sync ]]
+then
+  SINCE=`stat -c%Y .last-sync`
+else
+  SINCE=0
+fi
+touch /tmp/rmsync-start
+
+# Convert updated documents
+popd
+python3 -m remarks --since $SINCE .raw/ .
+
+# Record successfuly sync timestamp
+mv /tmp/rmsync-start .raw/.last-sync
+
+# Make a commit in the git
+MSG=`date +'%a %b %e %H:%M:%S %Z %Y'`
+git add *
+git commit -a -m "$MSG"
+
+popd
