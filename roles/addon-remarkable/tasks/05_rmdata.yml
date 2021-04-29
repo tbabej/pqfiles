@@ -22,5 +22,5 @@
     name: "reMarkable dat syncer"
     user:  "{{person['username']}}"
     job: "/home/{{ person['username'] }}/.pqrs/bin/sync_rmdata.sh"
-    minute: "*"
+    minute: "*/5"
   when: role_version is version("0.5.0", "lt")
