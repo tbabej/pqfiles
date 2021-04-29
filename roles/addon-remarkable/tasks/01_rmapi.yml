@@ -1,15 +1,26 @@
+- name: Ensure golang stack installed
+  become: yes
+  package:
+    name: golang
+    state: present
+  when: role_version is version("0.5.1", "lt")
+- name: Clone rmapi
+  git:
+    repo: "git@github.com:juruen/rmapi.git"
+    dest: "~/Installed/rmapi"
+    accept_hostkey: yes
+    update: no
+  when: role_version is version("0.5.1", "lt")
 - name: Install rmapi
-  unarchive:
-    src: https://github.com/juruen/rmapi/releases/download/v0.0.13/rmapi-linuxx86-64.tar.gz
-    dest: ~/.pqrs/bin/
-    remote_src: yes
-  when: role_version is version("0.1.0", "lt")
-- name: Rename rmapi to rmapi-original
-  command: mv ~/.pqrs/bin/rmapi ~/.pqrs/bin/rmapi-original
+  shell: go build
   args:
-    removes: ~/.pqrs/bin/rmapi
-    creates: ~/.pqrs/bin/rmapi-original
-  when: role_version is version("0.1.0", "lt")
+    chdir: "~/Installed/rmapi"
+  when: role_version is version("0.5.1", "lt")
+- name: Rename rmapi to rmapi-original
+  command: mv ~/Installed/rmapi/rmapi ~/.pqrs/bin/rmapi-original
+  args:
+    removes: ~/Installed/rmapi/rmapi
+  when: role_version is version("0.5.1", "lt")
 - name: Install rmapi-wrapper
   template:
     src: rmapi.j2
