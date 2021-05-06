@@ -31,12 +31,15 @@ HOSTS=(
     "ping.remarkable.com"
     "internal.cloud.remarkable.com"
 )
-for HOST in ${messages[@]}
+for HOST in ${HOSTS[@]}
 do
-    if [[ -z `cat /etc/hosts/ | grep " $HOST"` ]]
+    MATCH=`cat /etc/hosts | grep " $HOST"`
+    if [[ -z $MATCH ]]
     then
-        echo "DNS for $HOST set in /etc/hosts"
+        echo "Setting /etc/hosts DNS entry for $HOST"
         echo $IP $HOST >> /etc/hosts
+    else
+        echo "DNS entry for $HOST already set: '$MATCH'"
     fi
 done
 
