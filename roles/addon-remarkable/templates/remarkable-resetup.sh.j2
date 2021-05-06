@@ -17,10 +17,14 @@ if [[ -z `cat /etc/ca-certificates.conf | grep selfhosted/` ]]
 then
     echo "Registering selfhosted CA certificate"
     echo selfhosted/ca.cert.pem >> /etc/ca-certificates.conf
-    update-ca-certificates
 else
     echo "Selfhosted CA certificate registered"
 fi
+
+# Run update-ca-certificates each time. It is idempotent and while cert
+# reference in ca-certificates.conf is preserved across updates, the
+# certificate DB needs to be rebuilt.
+update-ca-certificates
 
 # Editing hosts file
 HOSTS=(
