@@ -1,0 +1,5 @@
+- name: Install Keybase
+  become: yes
+  package:
+      name: newsbeuter
+      state: present
