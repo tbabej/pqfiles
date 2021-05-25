@@ -1,5 +1,22 @@
-- name: Install Keybase
+- name: Install newsboat
   become: yes
   package:
-      name: newsbeuter
+      name: newsboat
       state: present
+- name: Ensure newsboat dirs exists
+  file:
+      path: "{{ item }}"
+      state: directory
+  loop:
+      - "~/.newsboat"
+      - "~/.pqrs/newsboat"
+- name: Render configuration
+  template:
+      src: config.j2
+      dest: ~/.pqrs/newsboat/config
+- name: Link configuration
+  file:
+      src: ~/.pqrs/newsboat/config
+      dest: ~/.newsboat/config
+      state: link
+      force: yes
