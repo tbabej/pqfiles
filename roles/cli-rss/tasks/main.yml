@@ -20,3 +20,13 @@
       dest: ~/.newsboat/config
       state: link
       force: yes
+- name: Ensure urls file exists
+  file:
+      path: ~/.pqrs/newsboat/urls
+      state: touch
+- name: Link url file
+  file:
+      src: ~/.pqrs/newsboat/urls
+      dest: ~/.newsboat/urls
+      state: link
+      force: yes
