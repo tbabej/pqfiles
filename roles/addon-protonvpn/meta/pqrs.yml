@@ -1,0 +1,6 @@
+description: "Setups ProtonVPN configuration and the CLI client."
+version: 0.2.0
+config:
+  protonvpn:
+    username: "openvpn-username"
+    password: "openvpn-password"

@@ -1,0 +1,18 @@
+- name: Install protonvpn client
+  become: yes
+  package:
+      name: protonvpn-cli
+      state: latest
+- name: Configure protonvpn
+  become: yes
+  ansible.builtin.expect:
+    command: protonvpn init  # this really needs sudo
+    responses:
+      overwrite that profile: "y"
+      OpenVPN username: "{{ protonvpn['username'] }}"
+      OpenVPN password: "{{ protonvpn['password'] }}"
+      Your plan: "3"
+      Your choice: "1"
+      information correct: "Y"
+  # you don't want to show passwords in your logs
+  no_log: true
